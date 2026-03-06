@@ -1,12 +1,20 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
+// valores iniciales
+int Hmin = 0;
+int Hmax = 20;
+int Smin = 30;
+int Smax = 150;
+int Vmin = 60;
+int Vmax = 255;
+
 int main() {
 
     cv::VideoCapture cap(0);
 
     if (!cap.isOpened()) {
-        std::cout << "Error abriendo camara\n";
+        std::cout << "No se pudo abrir la camara\n";
         return -1;
     }
 
@@ -14,29 +22,40 @@ int main() {
     cv::Mat hsv;
     cv::Mat mask;
 
+    // ventana para sliders
+    cv::namedWindow("Control HSV");
+
+    cv::createTrackbar("H min", "Control HSV", &Hmin, 179);
+    cv::createTrackbar("H max", "Control HSV", &Hmax, 179);
+
+    cv::createTrackbar("S min", "Control HSV", &Smin, 255);
+    cv::createTrackbar("S max", "Control HSV", &Smax, 255);
+
+    cv::createTrackbar("V min", "Control HSV", &Vmin, 255);
+    cv::createTrackbar("V max", "Control HSV", &Vmax, 255);
+
     while (true) {
 
         cap >> frame;
 
         if (frame.empty()) break;
 
-        // modo espejo
+        // espejo
         cv::flip(frame, frame, 1);
 
         // convertir a HSV
         cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
 
-        // rango de piel
-        cv::Scalar lower(0, 30, 60);
-        cv::Scalar upper(20, 150, 255);
+        // rango dinámico
+        cv::Scalar lower(Hmin, Smin, Vmin);
+        cv::Scalar upper(Hmax, Smax, Vmax);
 
-        // crear mascara
+        // máscara
         cv::inRange(hsv, lower, upper, mask);
 
-        // mostrar ventanas
+        // mostrar resultados
         cv::imshow("Camara", frame);
-        cv::imshow("HSV", hsv);
-        cv::imshow("Mascara de piel", mask);
+        cv::imshow("Mascara", mask);
 
         if (cv::waitKey(1) == 27) break;
     }
