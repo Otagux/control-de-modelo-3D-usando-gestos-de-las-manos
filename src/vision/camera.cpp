@@ -1,7 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <vector>
 
-// valores iniciales
 int Hmin = 0;
 int Hmax = 20;
 int Smin = 30;
@@ -21,8 +21,9 @@ int main() {
     cv::Mat frame;
     cv::Mat hsv;
     cv::Mat mask;
+    cv::Mat blur;
+    cv::Mat morph;
 
-    // ventana para sliders
     cv::namedWindow("Control HSV");
 
     cv::createTrackbar("H min", "Control HSV", &Hmin, 179);
@@ -37,25 +38,51 @@ int main() {
     while (true) {
 
         cap >> frame;
-
         if (frame.empty()) break;
 
-        // espejo
         cv::flip(frame, frame, 1);
 
-        // convertir a HSV
+        // BGR → HSV
         cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
 
-        // rango dinámico
         cv::Scalar lower(Hmin, Smin, Vmin);
         cv::Scalar upper(Hmax, Smax, Vmax);
 
-        // máscara
         cv::inRange(hsv, lower, upper, mask);
 
-        // mostrar resultados
+        // suavizar
+        cv::GaussianBlur(mask, blur, cv::Size(7,7), 0);
+
+        // operaciones morfologicas
+        cv::erode(blur, morph, cv::Mat(), cv::Point(-1,-1), 2);
+        cv::dilate(morph, morph, cv::Mat(), cv::Point(-1,-1), 2);
+
+        // encontrar contornos
+        std::vector<std::vector<cv::Point>> contours;
+        cv::findContours(morph, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+        if (!contours.empty()) {
+
+            int largestIndex = 0;
+            double largestArea = 0;
+
+            for (int i = 0; i < contours.size(); i++) {
+
+                double area = cv::contourArea(contours[i]);
+
+                if (area > largestArea) {
+                    largestArea = area;
+                    largestIndex = i;
+                }
+            }
+
+            // dibujar contorno de la mano
+            cv::drawContours(frame, contours, largestIndex, cv::Scalar(0,255,0), 3);
+        }
+
         cv::imshow("Camara", frame);
         cv::imshow("Mascara", mask);
+        cv::imshow("Morph", morph);
 
         if (cv::waitKey(1) == 27) break;
     }
