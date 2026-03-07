@@ -1,0 +1,3 @@
+/home/otagux/VSCODE - C/control-de-modelo-3D-usando-gestos-de-las-manos/build/CMakeFiles/hand_control.dir
+/home/otagux/VSCODE - C/control-de-modelo-3D-usando-gestos-de-las-manos/build/CMakeFiles/edit_cache.dir
+/home/otagux/VSCODE - C/control-de-modelo-3D-usando-gestos-de-las-manos/build/CMakeFiles/rebuild_cache.dir
