@@ -15,7 +15,7 @@ Crear un sistema que detecte manos usando OpenCV y reconozca gestos.
 - [ ] Reconocimiento de gestos
 - [ ] Control de modelo 3D
 
----
+
 
 # Después de esto vendrá lo interesante
 
@@ -51,3 +51,4 @@ con:
 
 Eso es lo que usan muchos sistemas de **hand tracking clásico antes de usar IA**.  
 Y te va a volar la cabeza cuando lo veas 🤯.
+ademas, este proyecto puede ser usado para diversas cosas, a pesar de ser solo un pasatiempo, ha ido creciendo hasta volverse un proyecto real y estructurado
